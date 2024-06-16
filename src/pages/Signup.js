@@ -1,27 +1,20 @@
-import React, { useState } from 'react'
-import { auth } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { signup } from '../features/auth/authThunks';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    const dispatch = useDispatch();
+    const { user, loading, error } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(userCredential);
-            const user = userCredential.user;
-            localStorage.setItem('token', user.accessToken);
-            localStorage.setItem('user', JSON.stringify(user));
-            navigate("/");
-        } catch (error) {
-            console.error(error);
-        }
+        dispatch(signup({ email, password }));
+        navigate('/');
     }
 
     return (
@@ -42,9 +35,10 @@ const Signup = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit" className='signup-button'>Signup</button>
+                <button type="submit" disabled={loading}>{loading ? 'Signing up...' : 'Sign Up'}</button>
             </form>
-            <p>Need to Login? <Link to="/login">Login</Link></p>
+            <p>Already have an account? <Link to="/login">Login</Link></p>
+            {error && <p>{error}</p>}
         </div>
     )
 }
