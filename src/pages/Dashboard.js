@@ -1,24 +1,20 @@
 import React, { useState } from "react";
-import { signOut } from 'firebase/auth';
 import { Input } from "../@/components/ui/input";
 import { Label } from "../@/components/ui/label";
-import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../features/auth/authThunks';
 
 const Dashboard = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            navigate("/login");
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/login');
+    };
+
     const [habits, setHabits] = useState([
         {
             day: 'Monday',
@@ -54,7 +50,8 @@ const Dashboard = () => {
 
     return (
         <div className="App">
-            <h2>Habits</h2>
+
+            <h2>Hi Gosia</h2>
             <form>
                 <div className="tw-flex tw-flex-col tw-w-full tw-max-w-sm tw-items-start tw-gap-1.5">
                     <Label htmlFor="habitname">Habit name</Label>
