@@ -1,70 +1,76 @@
-import React, { useState } from "react";
-import { Input } from "../@/components/ui/input";
-import { Label } from "../@/components/ui/label";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchHabits, selectAllHabits } from "../features/habits/habitsSlice";
+import { format } from "date-fns";
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../features/auth/authThunks';
 
 const Dashboard = () => {
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth);
+    const habits = useSelector(selectAllHabits);
+    const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate('/login');
-    };
-
-    const [habits, setHabits] = useState([
-        {
-            day: 'Monday',
-            habits: ['Running', 'Cycling', 'Reading book'],
-        },
-        {
-            day: 'Tuesday',
-            habits: ['Drinking water', 'Pilates'],
+    useEffect(() => {
+        if (user) {
+            dispatch(fetchHabits());
         }
+    }, [user, dispatch]);
 
-    ]);
+    const today = format(new Date(), 'EEEE');
+    const todayHabits = habits.filter(habit => habit.days.includes(today));
 
-    const [habitName, setHabitName] = useState('');
-    const [weekDay, setWeekDay] = useState('Monday');
-
-    const addHabit = (e) => {
+    const addNewHabit = (e) => {
         e.preventDefault();
-        setHabits(prevState => {
-            return prevState.map(obj => {
-                if (obj.day === weekDay) {
-                    return {
-                        ...obj,
-                        habits: [...obj.habits, habitName]
-                    }
-                }
-                return obj;
-            });
-        });
-        setHabitName('');
-        // setWeekDay('');
-
-    };
+        navigate('/addhabit');
+    }
 
     return (
-        <div className="App">
+        <div>
+            <button onClick={addNewHabit}>Add new Habit</button>
+            <h1>Weekly Habits</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>Habit</th>
+                    <th>Category</th>
+                    <th>Days</th>
+                </tr>
+                </thead>
+                <tbody>
+                {habits.map(habit => (
+                    <tr key={habit.id}>
+                        <td>{habit.name}</td>
+                        <td>{habit.category}</td>
+                        <td>{habit.days.join(", ")}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
 
-            <h2>Hi Gosia</h2>
-            <form>
-                <div className="tw-flex tw-flex-col tw-w-full tw-max-w-sm tw-items-start tw-gap-1.5">
-                    <Label htmlFor="habitname">Habit name</Label>
-                    <Input type="text" id="habitname" placeholder="type your habit" value={habitName} onChange={e => setHabitName(e.target.value)}/>
-                </div>
-                <button onClick={addHabit}>Add item</button>
-            </form>
-            <div>
-                {habits.map(habit => <ul><h2>{habit.day}</h2><p>{habit.habits}</p></ul>)}
-            </div>
-            <button onClick={handleLogout}>Logout</button>
+            <h1>Today's Habits</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>Habit</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {todayHabits.map(habit => (
+                    <tr key={habit.id}>
+                        <td>{habit.name}</td>
+                        <td>{habit.category}</td>
+                        <td>
+                            <button>Complete</button>
+                            <button>Remove</button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
         </div>
-    )
-}
+    );
+};
 
 export default Dashboard;
