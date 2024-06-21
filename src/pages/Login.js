@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../features/auth/authThunks';
+import { loginUser } from '../features/auth/authThunks';
 import { Link, useNavigate } from 'react-router-dom';
+import { selectAuthError, selectAuthStatus } from '../features/auth/authSlice';
 
 const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    const { user, loading, error } = useSelector((state) => state.auth);
+    const authError = useSelector(selectAuthError);
+    const authStatus = useSelector(selectAuthStatus);
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(login({ email, password }));
+        dispatch(loginUser({ email, password }));
         navigate('/');
     }
 
@@ -35,10 +37,9 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
+                <button type="submit">Login</button>
             </form>
             <p>Don't have an account? <Link to="/signup">Create an account</Link></p>
-            {error && <p>{error}</p>}
         </div>
     )
 }
