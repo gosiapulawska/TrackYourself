@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addHabit } from "../features/habits/habitsThunks";
+import { useNavigate } from 'react-router-dom';
 
 const AddHabit = () => {
     const [name, setName] = useState("");
     const [category, setCategory] = useState("Sport");
     const [days, setDays] = useState([]);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleDayChange = (e) => {
         const day = e.target.value;
@@ -15,13 +17,21 @@ const AddHabit = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(addHabit({ name, category, days }));
+        const habit = { name, category, days };
+        dispatch(addHabit(habit));
         setName("");
         setCategory("Sport");
         setDays([]);
+        navigate('/');
     };
+    const handleBack = (e) => {
+        e.preventDefault();
+        navigate('/');
+    }
 
     return (
+        <>
+        <button onClick={handleBack}>Back</button>
         <form onSubmit={handleSubmit}>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Habit Name" required />
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -44,6 +54,7 @@ const AddHabit = () => {
             </div>
             <button type="submit">Add Habit</button>
         </form>
+        </>
     );
 };
 
