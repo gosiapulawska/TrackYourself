@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchHabits, addHabit, removeHabit, completeHabit } from './habitsThunks';
 
+
 const initialState = {
     habits: [],
     status: 'idle',
@@ -25,7 +26,11 @@ const habitSlice = createSlice({
                 state.error = action.error.message;
             })
             .addCase(addHabit.fulfilled, (state, action) => {
-                state.habits.push(action.payload);
+                const newHabit = action.payload;
+                const habitExists = state.habits.some(habit => habit.id === newHabit.id);
+                if (!habitExists) {
+                    state.habits.push(newHabit);
+                }
             })
             .addCase(removeHabit.fulfilled, (state, action) => {
                 state.habits = state.habits.filter(habit => habit.id !== action.payload);
@@ -33,7 +38,7 @@ const habitSlice = createSlice({
             .addCase(completeHabit.fulfilled, (state, action) => {
                 const habit = state.habits.find(habit => habit.id === action.payload);
                 if (habit) {
-                    habit.completed = true;
+                    habit.status = 'completed';
                 }
             });
     },
