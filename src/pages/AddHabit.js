@@ -31,29 +31,43 @@ const AddHabit = () => {
 
     return (
         <>
-        <button onClick={handleBack}>Back</button>
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Habit Name" required />
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                <option value="Sport">Sport</option>
-                <option value="Diet">Diet</option>
-                <option value="Relax">Relax</option>
-            </select>
-            <div>
-                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => (
-                    <label key={day}>
-                        <input
-                            type="checkbox"
-                            value={day}
-                            checked={days.includes(day)}
-                            onChange={handleDayChange}
-                        />
-                        {day}
-                    </label>
-                ))}
+            <header>
+                <nav className='tw-font-sans tw-flex tw-flex-row tw-justify-between tw-h-[65px] tw-px-5 tw-border-b-2 tw-border-light-gray'>
+                    <button className='tw-text-[20px] tw-font-bold tw-text-black'>track yourself</button>
+                    <button className='tw-text-pink tw-text-[16px] tw-font-semibold tw-bg-light-pink tw-px-[40px] tw-py-[7px] tw-rounded-lg tw-my-2 hover:tw-bg-pink hover:tw-text-light-pink'>Log out</button>
+                </nav>
+            </header>
+            <div className='sm:tw-m-5 tw-font-sans tw-m-0 tw-bg-beige tw-rounded-lg sm:tw-h-[calc(100vh-108px)] tw-h-[calc(100vh-65px)]'>
+                <button className='tw-text-pink tw-text-[16px] tw-font-semibold tw-pt-6 sm:tw-pl-10 tw-pl-5' onClick={handleBack}>Back</button>
+                <div className='tw-px-5 sm:tw-px-0 sm:tw-w-[500px] tw-w-[100%] tw-m-auto tw-mt-[10px] tw-justify-center tw-flex tw-flex-col tw-items-center'>
+                    <h1 className='tw-mb-[30px] tw-text-black tw-text-[27px] tw-font-bold'>Add new habit</h1>
+                    <form className='tw-w-[100%] tw-flex tw-flex-col' onSubmit={handleSubmit}>
+                        <label className='tw-text-gray tw-text-[13px] tw-mb-[12px]' htmlFor='habitname'>Habit name</label>
+                        <input className='tw-text-[16px] tw-pb-[5px] tw-bg-beige tw-mb-[20px] tw-border-b-[1px] tw-border-gray placeholder:tw-text-gray' type="text" id='habitname' value={name} onChange={(e) => setName(e.target.value)} placeholder="Habit Name" required />
+                        <label className='tw-text-gray tw-text-[13px] tw-mb-[12px]' htmlFor='habitcategory'>Category</label>
+                        <select className='tw-rounded-lg tw-px-[10px] tw-py-[8px] tw-text-[16px] tw-mb-[20px] tw-bg-beige tw-border-gray tw-border-[1px]' id='habitcategory' value={category} onChange={(e) => setCategory(e.target.value)}>
+                            <option value="Sport">Sport</option>
+                            <option value="Diet">Diet</option>
+                            <option value="Relax">Relax</option>
+                        </select>
+                        <label className='tw-text-gray tw-text-[13px] tw-mb-[12px]'>Week days</label>
+                        <div className='tw-mb-[35px] tw-flex'>
+                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => (
+                                    <label className='has-[:checked]:tw-bg-lila has-[:checked]:tw-border-0 has-[:checked]:tw-font-semibold tw-text-[12px] tw-items-center tw-justify-center tw-flex tw-w-[34px] tw-h-[34px] tw-rounded-[50px] tw-border-[1px] tw-border-gray tw-bg-white tw-cursor-pointer tw-mr-[10px]' key={day}>
+                                        <input className='peer tw-absolute tw-left-[-99999%]'
+                                               type="checkbox"
+                                               value={day}
+                                               checked={days.includes(day)}
+                                               onChange={handleDayChange}
+                                        />
+                                        {day.charAt(0)}
+                                    </label>
+                            ))}
+                        </div>
+                        <button className='tw-text-white tw-text-[16px] tw-font-semibold tw-bg-pink tw-px-[40px] tw-py-[10px] tw-max-w-[180px] tw-self-center tw-rounded-lg hover:tw-bg-light-pink hover:tw-text-pink' type="submit">Add Habit</button>
+                    </form>
+                </div>
             </div>
-            <button type="submit">Add Habit</button>
-        </form>
         </>
     );
 };
