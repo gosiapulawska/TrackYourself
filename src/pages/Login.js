@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../features/auth/authThunks';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import { selectAuthError, selectAuthStatus } from '../features/auth/authSlice';
+import { auth } from '../firebase';
+import { loginSuccess, loginFailure } from '../features/auth/authSlice';
 
 const Login = () => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    const authError = useSelector(selectAuthError);
-    const authStatus = useSelector(selectAuthStatus);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        dispatch(loginUser({ email, password }));
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            dispatch(loginSuccess(userCredential.user));
+        } catch (err) {
+            dispatch(loginFailure(err.message));
+        }
         navigate('/');
-    }
+    };
+
 
     return (
         <>
@@ -29,7 +33,7 @@ const Login = () => {
             <div className='sm:tw-m-5 tw-font-sans tw-m-0 tw-bg-beige tw-rounded-lg sm:tw-h-[calc(100vh-108px)] tw-h-[calc(100vh-65px)]'>
                 <div className='tw-px-5 sm:tw-px-0 sm:tw-w-[500px] tw-w-[100%] tw-m-auto tw-justify-center tw-flex tw-flex-col tw-items-center'>
                     <h1 className='tw-mt-[50px] tw-mb-[30px] tw-text-black tw-text-[27px] tw-font-bold'>Sign In</h1>
-                    <form className='tw-w-[100%] tw-flex tw-flex-col login-form' onSubmit={handleSubmit}>
+                    <form className='tw-w-[100%] tw-flex tw-flex-col login-form' onSubmit={handleLogin}>
                         <label className='tw-text-gray tw-text-[13px] tw-mb-[12px]' htmlFor='email'>Email</label>
                         <input className='tw-text-[16px] tw-pb-[5px] tw-bg-beige tw-mb-[20px] tw-border-b-[1px] tw-border-gray placeholder:tw-text-gray'
                                type="email"
