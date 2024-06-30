@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { loginSuccess, loginFailure } from '../features/auth/authSlice';
 
@@ -27,7 +27,7 @@ const Login = () => {
         <>
             <header>
                 <nav className='tw-font-sans tw-flex tw-flex-row tw-h-[65px] tw-px-5 tw-border-b-2 tw-border-light-gray'>
-                    <button className='tw-text-[20px] tw-font-bold tw-text-black'>track yourself</button>
+                    <button className='tw-text-[15px] sm:tw-text-[20px] tw-font-bold tw-text-black'>track yourself</button>
                 </nav>
             </header>
             <div className='sm:tw-m-5 tw-font-sans tw-m-0 tw-bg-beige tw-rounded-lg sm:tw-h-[calc(100vh-108px)] tw-h-[calc(100vh-65px)]'>
@@ -52,8 +52,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <button className='tw-mb-[30px] tw-text-white tw-text-[16px] tw-font-semibold tw-bg-pink tw-px-[40px] tw-py-[10px] tw-max-w-[180px] tw-self-center tw-rounded-lg hover:tw-bg-light-pink hover:tw-text-pink' type="submit">Login</button>
-                        <p className='tw-self-center tw-text-gary tw-text-[12px]'>Don't have an account? <Link to="/signup" className='tw-text-pink tw-text-[12px] tw-font-semibold'>Create an account</Link></p>
+                        <button className='tw-mb-[30px] tw-text-white tw-text-[14px] sm:tw-text-[16px] tw-font-semibold tw-bg-pink tw-px-[40px] tw-py-[10px] tw-max-w-[180px] tw-self-center tw-rounded-lg hover:tw-bg-light-pink hover:tw-text-pink' type="submit">Login</button>
                     </form>
                 </div>
             </div>
