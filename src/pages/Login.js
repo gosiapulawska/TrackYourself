@@ -8,6 +8,7 @@ import { loginSuccess, loginFailure } from '../features/auth/authSlice';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -16,10 +17,12 @@ const Login = () => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             dispatch(loginSuccess(userCredential.user));
+            navigate('/');
         } catch (err) {
+
             dispatch(loginFailure(err.message));
+            setError(err.message);
         }
-        navigate('/');
     };
 
 
@@ -53,7 +56,9 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <button className='tw-mb-[30px] tw-text-white tw-text-[14px] sm:tw-text-[16px] tw-font-semibold tw-bg-pink tw-px-[40px] tw-py-[10px] tw-max-w-[180px] tw-self-center tw-rounded-lg hover:tw-bg-light-pink hover:tw-text-pink' type="submit">Login</button>
+                        <p>{error}</p>
                     </form>
+
                 </div>
             </div>
         </>
