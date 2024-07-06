@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, updateDoc, deleteDoc, doc, getDoc, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../features/auth/authSlice';
 
 const Dashboard = () => {
     const [habits, setHabits] = useState([]);
     const user = useSelector(state => state.auth.user);
     const username = user.email.substring(0, user.email.indexOf('@'));
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const today = format(new Date(), 'EEEE');
     const startDate = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -82,12 +84,17 @@ const Dashboard = () => {
         navigate('/addhabit');
     };
 
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/login');
+    };
+
     return (
         <>
             <header>
                 <nav className='tw-font-sans tw-flex tw-flex-row tw-justify-between tw-h-[65px] tw-px-5 tw-border-b-2 tw-border-light-gray'>
                     <button className='tw-text-[15px] sm:tw-text-[20px] tw-font-bold tw-text-black'>track yourself</button>
-                    <button className='tw-text-pink  tw-text-[14px] sm:tw-text-[16px] tw-font-semibold tw-bg-light-pink tw-px-[20px] sm:tw-px-[40px] tw-py-[7px] tw-rounded-lg tw-my-2 hover:tw-bg-pink hover:tw-text-light-pink'>Log out</button>
+                    <button className='tw-text-pink  tw-text-[14px] sm:tw-text-[16px] tw-font-semibold tw-bg-light-pink tw-px-[20px] sm:tw-px-[40px] tw-py-[7px] tw-rounded-lg tw-my-2 hover:tw-bg-pink hover:tw-text-light-pink' onClick={handleLogout}>Log out</button>
                 </nav>
             </header>
             <div className='tw-flex tw-gap-1 sm:tw-gap-5 tw-flex-col md:tw-flex-row tw-m-1 sm:tw-m-5'>
