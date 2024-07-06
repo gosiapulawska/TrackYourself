@@ -1,8 +1,15 @@
-# Getting Started with Create React App
+# Track Yourself Application
+
+Track yourself is an application for setting goals on a daily basis and monitoring their achievement. The main purpose of this application is to motivate the user in achieving nutritional, sports and relaxation goals.
+
+## Application Usage
+
+The application uses the firebase database and authentication so any user, who has account in firebase can use the app from any device. In the first step the user has to log in with firebase credentials. After successful authentication the app dashboard will be displayed. On the dashboard we can follow our daily habits changing their status or deleting them. There will be also presented the view with habits and their statuses for the current week. In the top section we can add new habit. The Add Habit page includes the form that has to be completed to add the new habit. The user has to give the name of the habit, select the corresponding category and weekdays for the habit. In the top bar of the app there is Logout button which logs the user out. But it doesn't mean the habits will be deleted. They're stored in firebase database, so they will be visible after the user logs in again.
+
+
+## Installation Guide and Available Scripts
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
 
 In the project directory, you can run:
 
