@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { collection, addDoc, deleteDoc, doc, getDoc, updateDoc, getDocs, query, where } from 'firebase/firestore';
+import React, { useState } from "react";
+import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const AddHabit = () => {
     const [habits, setHabits] = useState([]);
     const [habit, setHabit] = useState({ name: '', category: 'Sport', days: [] });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
     const user = useSelector(state => state.auth.user);
     const navigate = useNavigate();
 
@@ -24,25 +23,24 @@ const AddHabit = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (user) {
-            const status = {};
-            habit.days.forEach(day => {
-                status[day] = 'uncompleted';
-            });
-            try {
-                const docRef = await addDoc(collection(db, 'habits'), { uid: user.uid,
-                    status,
-                    ...habit });
-                setHabits([...habits, { ...habit, id: docRef.id }]);
-                setHabit({ name: '', category: 'Sport', days: [] });
-                navigate('/');
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
+            if (user) {
+                const status = {};
+                habit.days.forEach(day => {
+                    status[day] = 'uncompleted';
+                });
+                try {
+                    const docRef = await addDoc(collection(db, 'habits'), {
+                        uid: user.uid,
+                        status,
+                        ...habit
+                    });
+                    setHabits([...habits, {...habit, id: docRef.id}]);
+                    setHabit({name: '', category: 'Sport', days: []});
+                    navigate('/');
+                } catch (error) {
+                    setErrors(error.message);
+                }
             }
-        }
     };
 
 
