@@ -18,59 +18,70 @@ const Dashboard = () => {
     const endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
 
     useEffect(() => {
-        const fetchHabits = async () => {
+        const fetchHabits = () => {
             const habitsCol = collection(db, 'habits');
             const q = query(habitsCol, where('uid', '==', user.uid));
-            const snapshot = await getDocs(q);
-            const habitsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setHabits(habitsList);
+            getDocs(q)
+                .then(snapshot => {
+                    const habitsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setHabits(habitsList);
+                })
+                .catch(error => {
+                    console.error('Error fetching habits:', error);
+                });
         };
         fetchHabits();
     }, [user.uid]);
 
-    const handleCompleteClick = async (habitId, day) => {
-        try {
-            const habitRef = doc(db, 'habits', habitId);
-            const habitSnapshot = await getDoc(habitRef);
-            if (habitSnapshot.exists()) {
-                const habitData = habitSnapshot.data();
-                const updatedStatus = { ...habitData.status, [day]: 'completed' };
-                await updateDoc(habitRef, { status: updatedStatus });
-                setHabits(habits.map(habit => {
-                    if (habit.id === habitId) {
-                        habit.status = updatedStatus;
-                    }
-                    return habit;
-                }));
-            }
-        } catch (error) {
-            console.error('Error updating habit:', error);
-        }
+    const handleCompleteClick = (habitId, day) => {
+        const habitRef = doc(db, 'habits', habitId);
+        getDoc(habitRef)
+            .then(habitSnapshot => {
+                if (habitSnapshot.exists()) {
+                    const habitData = habitSnapshot.data();
+                    const updatedStatus = { ...habitData.status, [day]: 'completed' };
+                    return updateDoc(habitRef, { status: updatedStatus }).then(() => {
+                        setHabits(habits.map(habit => {
+                            if (habit.id === habitId) {
+                                habit.status = updatedStatus;
+                            }
+                            return habit;
+                        }));
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error updating habit:', error);
+            });
     };
 
 
-    const handleDeleteClick = async (habitId, day) => {
-        try {
-            const habitRef = doc(db, 'habits', habitId);
-            const habitSnapshot = await getDoc(habitRef);
-            if (habitSnapshot.exists()) {
-                const habitData = habitSnapshot.data();
-                const updatedDays = habitData.days.filter(d => d !== day);
-                if (updatedDays.length > 0) {
-                    await updateDoc(habitRef, { days: updatedDays });
-                } else {
-                    await deleteDoc(habitRef);
-                }
-                setHabits(habits.map(habit => {
-                    if (habit.id === habitId) {
-                        habit.days = updatedDays;
+    const handleDeleteClick = (habitId, day) => {
+        const habitRef = doc(db, 'habits', habitId);
+        getDoc(habitRef)
+            .then(habitSnapshot => {
+                if (habitSnapshot.exists()) {
+                    const habitData = habitSnapshot.data();
+                    const updatedDays = habitData.days.filter(d => d !== day);
+                    if (updatedDays.length > 0) {
+                        return updateDoc(habitRef, { days: updatedDays }).then(() => {
+                            setHabits(habits.map(habit => {
+                                if (habit.id === habitId) {
+                                    habit.days = updatedDays;
+                                }
+                                return habit;
+                            }));
+                        });
+                    } else {
+                        return deleteDoc(habitRef).then(() => {
+                            setHabits(habits.filter(habit => habit.id !== habitId));
+                        });
                     }
-                    return habit;
-                }).filter(habit => habit.days.length > 0));
-            }
-        } catch (error) {
-            console.error('Error deleting habit:', error);
-        }
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting habit:', error);
+            });
     };
 
     const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -137,11 +148,6 @@ const Dashboard = () => {
                             </tbody>
                         </table>
                     </div>
-
-
-
-
-
                 </div>
                 <div className='tw-px-5 tw-py-7 tw-rounded-lg md:tw-w-[300px] tw-shrink-0 tw-bg-purple'>
                     <h2 className='tw-text-white tw-text-[18px] tw-font-bold'>{today}, {format(new Date(), 'MMMM d')}</h2>

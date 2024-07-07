@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+//Here we create the Redux Slice with the initial state values and reducer functions to define how the state can be updated.
 const authSlice = createSlice({
     name: 'auth',
     initialState: {

@@ -10,9 +10,12 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 
 
 const App = () => {
+
+    //To interact with the Redux store created in Redux Slice, we read the data from the store using useSelector and dispatch actions using useDispatch.
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
 
+    //onAuthStateChanged is firebase observer method. This observer gets called whenever the user's sign-in state changes.
     auth.onAuthStateChanged((user) => {
         if (!user) {
             dispatch(logout());

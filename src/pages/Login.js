@@ -12,19 +12,19 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    //signInWithEmailAndPassword is firebase method, which runs as the users completes the form.
+    const handleLogin = (e) => {
         e.preventDefault();
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            dispatch(loginSuccess(userCredential.user));
-            navigate('/');
-        } catch (err) {
-
-            dispatch(loginFailure(err.message));
-            setError(err.message);
-        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                dispatch(loginSuccess(userCredential.user));
+                navigate('/');
+            })
+            .catch((err) => {
+                dispatch(loginFailure(err.message));
+                setError(err.message);
+            });
     };
-
 
     return (
         <>
@@ -58,7 +58,6 @@ const Login = () => {
                         <button className='tw-mb-[30px] tw-text-white tw-text-[14px] sm:tw-text-[16px] tw-font-semibold tw-bg-pink tw-px-[40px] tw-py-[10px] tw-max-w-[180px] tw-self-center tw-rounded-lg hover:tw-bg-light-pink hover:tw-text-pink' type="submit">Login</button>
                         <p>{error}</p>
                     </form>
-
                 </div>
             </div>
         </>
