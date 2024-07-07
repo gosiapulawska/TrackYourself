@@ -21,25 +21,27 @@ const AddHabit = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
             if (user) {
                 const status = {};
                 habit.days.forEach(day => {
                     status[day] = 'uncompleted';
                 });
-                try {
-                    const docRef = await addDoc(collection(db, 'habits'), {
+
+                addDoc(collection(db, 'habits'), {
                         uid: user.uid,
                         status,
                         ...habit
+                    })
+                    .then(docRef => {
+                        setHabits([...habits, {...habit, id: docRef.id}]);
+                        setHabit({name: '', category: 'Sport', days: []});
+                        navigate('/');
+                    })
+                    .catch(error => {
+                        setErrors(error.message);
                     });
-                    setHabits([...habits, {...habit, id: docRef.id}]);
-                    setHabit({name: '', category: 'Sport', days: []});
-                    navigate('/');
-                } catch (error) {
-                    setErrors(error.message);
-                }
             }
     };
 
